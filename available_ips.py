@@ -1,5 +1,20 @@
+import boto3
+
 def get_available_ips(vpc_id):
+    ec2 = boto3.client("ec2")
+
+    response = ec2.describe_subnets(Filters=[{'Name': 'vpc-id', 'Values': [vpc_id]}])
+    subnets = response['Subnets']
+
+    available_ips = []
     
+    for subnet in subnets:
+        subnet_id = subnet['SubnetId']
+
+        available_ips_count = subnet.get('AvailableIpAddressCount', 0)
+        available_ips.append((subnet_id, available_ips_count))
+    
+    return available_ips
 
 def lambda_handler(event, context):
     # Set your VPC ID here
