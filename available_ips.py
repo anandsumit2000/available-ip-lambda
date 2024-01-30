@@ -1,4 +1,5 @@
 import boto3
+import os
 
 def get_available_ips(vpc_id):
     ec2 = boto3.client("ec2")
@@ -18,7 +19,15 @@ def get_available_ips(vpc_id):
 
 def lambda_handler(event, context):
     # Set your VPC ID here
-    vpc_id = 'your_vpc_id'
+    vpc_id = os.environ.get('VPC_ID')
+
+    if not vpc_id:
+        return {
+            'statusCode': 400,
+            'body': {
+                'message': 'VPC_ID environment variable is not set.'
+            }
+        }
 
     available_ips = get_available_ips(vpc_id)
 
