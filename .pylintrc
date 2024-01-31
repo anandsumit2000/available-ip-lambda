@@ -1,2 +1,4 @@
 [MASTER]
-disable = C0114
+disable = 
+    C0114, # Lint issue : Missing module-level docstring
+    C0116 # Lint issue : Missing function-level docstring

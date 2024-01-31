@@ -35,9 +35,14 @@ def push_metric_to_cloudwatch(metric_name, value, namespace='VPCCustomNamespace'
         ]
     )
 
+# def lambda_handler(event, context):
+# event and context parameters have no utilization in this script
+# as a result pylint raises an W0613 (unused arguments in your function or method)
+# hence they have been replaced with _ and __ to allow
+# AWS Lambda to trigger the function
 
-def lambda_handler(event, context):
-    # Set your VPC ID here
+def lambda_handler(_, __):
+    # Set your VPC ID as environment variable
     vpc_id = os.environ.get('VPC_ID')
 
     if not vpc_id:
