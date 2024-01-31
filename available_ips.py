@@ -1,5 +1,5 @@
-import boto3
 import os
+import boto3
 
 def get_available_ips(vpc_id):
     ec2 = boto3.client("ec2")
@@ -8,13 +8,13 @@ def get_available_ips(vpc_id):
     subnets = response['Subnets']
 
     available_ips = []
-    
+
     for subnet in subnets:
         subnet_id = subnet['SubnetId']
 
         available_ips_count = subnet.get('AvailableIpAddressCount', 0)
         available_ips.append((subnet_id, available_ips_count))
-    
+
     return available_ips
 
 def push_metric_to_cloudwatch(metric_name, value, namespace='VPCCustomNamespace'):
