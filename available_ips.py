@@ -17,6 +17,25 @@ def get_available_ips(vpc_id):
     
     return available_ips
 
+def push_metric_to_cloudwatch(metric_name, value, namespace='VPCCustomNamespace'):
+    cloudwatch = boto3.client('cloudwatch')
+
+    subnet_id, ips_count = value
+
+    # Put metric data
+    cloudwatch.put_metric_data(
+        Namespace=namespace,
+        MetricData=[
+            {
+                'MetricName': metric_name,
+                'Value': ips_count,
+                'Unit': 'Count',
+                'Dimensions': [{'Name': 'SubnetId', 'Value': subnet_id}]
+            },
+        ]
+    )
+
+
 def lambda_handler(event, context):
     # Set your VPC ID here
     vpc_id = os.environ.get('VPC_ID')
@@ -34,6 +53,9 @@ def lambda_handler(event, context):
     print("Available IPs in the VPC:")
     for subnet_id, ips_count in enumerate(available_ips, start=1):
         print(f"Subnet {subnet_id}: {ips_count[1]} IPs")
+
+        # Push metric to CloudWatch
+        push_metric_to_cloudwatch('Available IP Count', ips_count)
 
     return {
         'statusCode': 200,
